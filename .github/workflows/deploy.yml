@@ -30,6 +30,7 @@ jobs:
 
       - name: Overlay our custom Skill Bridge NB files on top
         run: |
+          mkdir -p build/app/Models build/app/Services build/app/Mail build/app/Console/Commands
           cp -r repo/app/Models/. build/app/Models/
           cp -r repo/app/Services/. build/app/Services/
           cp -r repo/app/Mail/. build/app/Mail/
