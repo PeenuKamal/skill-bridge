@@ -108,7 +108,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publicroot/
-          server-dir: ${{ secrets.FTP_PUBLIC_DIR || 'domains/skill-bridge.thedigisparrow.com/public_html/' }}
+          server-dir: ${{ secrets.FTP_PUBLIC_DIR || 'public_html/' }}
           exclude: |
             **/.git*
             **/.git*/**
@@ -120,7 +120,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./appcode/
-          server-dir: ${{ secrets.FTP_APP_DIR || 'domains/skill-bridge.thedigisparrow.com/skillbridge_app/' }}
+          server-dir: ${{ secrets.FTP_APP_DIR || 'skillbridge_app/' }}
           exclude: |
             **/.git*
             **/.git*/**
