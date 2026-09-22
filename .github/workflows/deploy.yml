@@ -78,14 +78,43 @@ jobs:
           cd build && php artisan migrate --force
           cd build && php artisan account:create staff "${{ secrets.ADMIN_NAME }}" "${{ secrets.ADMIN_EMAIL }}" super_admin || true
 
-      - name: Upload everything to Hostinger
+      - name: Split the build into a "public" folder and a private "app" folder
+        # Laravel is only safe to run if the WEBSITE'S folder only contains what
+        # was inside Laravel's own "public" folder - everything else (your code,
+        # .env, database) must sit next to it, NOT inside it, or visitors could
+        # download your source code and secrets. Since Hostinger's "Document
+        # Root" setting couldn't be found, we do the equivalent split ourselves
+        # here, so nothing needs to be changed in Hostinger's settings at all.
+        run: |
+          mkdir -p publicroot appcode
+          cp -r build/public/. publicroot/
+          rsync -a --exclude='public' build/ appcode/
+          sed -i \
+            -e "s#\.\./vendor/autoload\.php#../skillbridge_app/vendor/autoload.php#" \
+            -e "s#\.\./bootstrap/app\.php#../skillbridge_app/bootstrap/app.php#" \
+            -e "s#\.\./storage/framework/maintenance\.php#../skillbridge_app/storage/framework/maintenance.php#" \
+            publicroot/index.php
+
+      - name: Upload the public files (what visitors' browsers actually reach)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./build/
-          server-dir: /skill-bridge-app/
+          local-dir: ./publicroot/
+          server-dir: ${{ secrets.FTP_PUBLIC_DIR || 'domains/skill-bridge.thedigisparrow.com/public_html/' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+
+      - name: Upload the private app code (kept next to, not inside, the public folder)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./appcode/
+          server-dir: ${{ secrets.FTP_APP_DIR || 'domains/skill-bridge.thedigisparrow.com/skillbridge_app/' }}
           exclude: |
             **/.git*
             **/.git*/**
