@@ -95,6 +95,13 @@ jobs:
           mkdir -p publicroot appcode
           cp -r build/public/. publicroot/
           rsync -a --exclude='public' build/ appcode/
+          # Your FTP account can only reach your site's public_html folder, it
+          # can't go outside it - so the private app code has to live inside
+          # public_html too, in this "skillbridge_app" folder. This file tells
+          # the web server to refuse ANY direct browser request into that
+          # folder, so .env, the database, and your code stay unreachable even
+          # though they're technically sitting next to the public part.
+          echo 'PElmTW9kdWxlIG1vZF9hdXRoel9jb3JlLmM+CiAgICBSZXF1aXJlIGFsbCBkZW5pZWQKPC9JZk1vZHVsZT4KPElmTW9kdWxlICFtb2RfYXV0aHpfY29yZS5jPgogICAgT3JkZXIgYWxsb3csZGVueQogICAgRGVueSBmcm9tIGFsbAo8L0lmTW9kdWxlPgo=' | base64 -d > appcode/.htaccess
           sed -i \
             -e "s#\.\./vendor/autoload\.php#../skillbridge_app/vendor/autoload.php#" \
             -e "s#\.\./bootstrap/app\.php#../skillbridge_app/bootstrap/app.php#" \
@@ -108,7 +115,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publicroot/
-          server-dir: ${{ secrets.FTP_PUBLIC_DIR || 'public_html/' }}
+          server-dir: ${{ secrets.FTP_PUBLIC_DIR || './' }}
           exclude: |
             **/.git*
             **/.git*/**
