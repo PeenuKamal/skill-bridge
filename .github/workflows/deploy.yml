@@ -42,7 +42,12 @@ jobs:
           cp -f repo/config/auth.php build/config/auth.php
           cp -f repo/database/migrations/2026_09_22_*.php build/database/migrations/
           cp -f repo/routes/web.php build/routes/web.php
-          cp -f repo/bootstrap/app.php build/bootstrap/app.php
+          # bootstrap/app.php is written directly here (base64-encoded, decoded
+          # below) instead of copied from the repo, because the copy in the
+          # repo is left over from an old, incompatible Laravel version. This
+          # guarantees the correct, current-Laravel-style file every time,
+          # regardless of what's committed.
+          echo 'PD9waHAKCnVzZSBJbGx1bWluYXRlXEZvdW5kYXRpb25cQXBwbGljYXRpb247CnVzZSBJbGx1bWluYXRlXEZvdW5kYXRpb25cQ29uZmlndXJhdGlvblxFeGNlcHRpb25zOwp1c2UgSWxsdW1pbmF0ZVxGb3VuZGF0aW9uXENvbmZpZ3VyYXRpb25cTWlkZGxld2FyZTsKdXNlIElsbHVtaW5hdGVcSHR0cFxSZXF1ZXN0OwoKcmV0dXJuIEFwcGxpY2F0aW9uOjpjb25maWd1cmUoYmFzZVBhdGg6IGRpcm5hbWUoX19ESVJfXykpCiAgICAtPndpdGhSb3V0aW5nKAogICAgICAgIHdlYjogX19ESVJfXy4nLy4uL3JvdXRlcy93ZWIucGhwJywKICAgICAgICBjb21tYW5kczogX19ESVJfXy4nLy4uL3JvdXRlcy9jb25zb2xlLnBocCcsCiAgICAgICAgaGVhbHRoOiAnL3VwJywKICAgICkKICAgIC0+d2l0aE1pZGRsZXdhcmUoZnVuY3Rpb24gKE1pZGRsZXdhcmUgJG1pZGRsZXdhcmUpIHsKICAgICAgICAvLyBTZW5kIGEgbG9nZ2VkLW91dCB2aXNpdG9yIHRvIHRoZSByaWdodCBwb3J0YWwncyBsb2dpbiBwYWdlIGluc3RlYWQKICAgICAgICAvLyBvZiBhIGdlbmVyaWMgb25lLCBiYXNlZCBvbiB3aGljaCBwYXJ0IG9mIHRoZSBzaXRlIHRoZXkgd2VyZSBpbi4KICAgICAgICAkbWlkZGxld2FyZS0+cmVkaXJlY3RHdWVzdHNUbyhmdW5jdGlvbiAoUmVxdWVzdCAkcmVxdWVzdCkgewogICAgICAgICAgICByZXR1cm4gbWF0Y2ggKHRydWUpIHsKICAgICAgICAgICAgICAgICRyZXF1ZXN0LT5pcygnc3RhZmYqJykgPT4gcm91dGUoJ3N0YWZmLmxvZ2luJyksCiAgICAgICAgICAgICAgICAkcmVxdWVzdC0+aXMoJ3N0dWRlbnQqJykgPT4gcm91dGUoJ3N0dWRlbnQubG9naW4nKSwKICAgICAgICAgICAgICAgICRyZXF1ZXN0LT5pcygnYWdlbnQqJykgPT4gcm91dGUoJ2FnZW50LmxvZ2luJyksCiAgICAgICAgICAgICAgICBkZWZhdWx0ID0+IHJvdXRlKCdob21lJyksCiAgICAgICAgICAgIH07CiAgICAgICAgfSk7CiAgICB9KQogICAgLT53aXRoRXhjZXB0aW9ucyhmdW5jdGlvbiAoRXhjZXB0aW9ucyAkZXhjZXB0aW9ucykgewogICAgICAgIC8vCiAgICB9KS0+Y3JlYXRlKCk7Cg==' | base64 -d > build/bootstrap/app.php
           mkdir -p build/public/images
           cp -f repo/public/images/skill-logo.png build/public/images/skill-logo.png
           rm -rf build/resources/views
